@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Test Web worker pro spuštění zacykleného kódu</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<p><button onclick="spustitWorker('while-true')">Spustit zacyklení</button> <a href="./while-true.js"><code>while-true.js</code></a></p>
+	<p><button onclick="spustitWorker('for')">Spustit funkční kód</button> <a href="./for.js"><code>for.js</code></a></p>
+
+	<div id="result"></div><!-- /#result -->
+
+	<script>
+	var w, casovac;
+	function spustitWorker(scriptName) {
+		if (window.Worker) {
+			w = new Worker(scriptName + ".js");
+
+			w.onmessage = function(event){
+				document.getElementById("result").innerHTML = event.data;
+				clearTimeout(casovac);
+			};
+
+			casovac = setTimeout(function() {
+				w.terminate();
+				document.getElementById("result").innerHTML = "Spuštění kódu selhalo";
+			}, 500);
+		} else {
+			alert("Worker nefunguje");
+		}		
+	}
+	</script>
+</body>
+</html>
